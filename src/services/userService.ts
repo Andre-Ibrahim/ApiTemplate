@@ -37,7 +37,7 @@ async function authUser(user: AuthorizeRequest): Promise<string | null> {
     }
 
     if(await bcrypt.compare(user.password, storedUser.password)){
-        return await jwt.sign({role: storedUser.role}, process.env.JWT_SECRET, { expiresIn: '1h'});
+        return await jwt.sign({email: storedUser.email, role: storedUser.role}, process.env.JWT_SECRET, { expiresIn: '1h'});
     }
     
     return null;
