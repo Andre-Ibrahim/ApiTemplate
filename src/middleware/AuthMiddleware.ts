@@ -16,12 +16,12 @@ function verifyUserToken(req, res, next) {
         const decoded = jwt.verify(trimmedToken, process.env.JWT_SECRET) as CustomJwtPayload;
 
         if(decoded.role !== Role.User && decoded.role !== Role.Admin){
-            res.status(403).json();
+            return res.status(403).json();
         }
 
         next();
     } catch (error) {
-        res.status(401).json();
+        return res.status(401).json();
     }
  };
 
@@ -37,12 +37,12 @@ function verifyUserToken(req, res, next) {
         const decoded = await jwt.verify(trimmedToken, process.env.JWT_SECRET) as CustomJwtPayload;
 
         if(decoded.role !== Role.Admin){
-            res.status(403).json();
+            return res.status(403).json();
         }
 
         next();
     } catch (error) {
-        res.status(401).json();
+        return res.status(401).json();
     }
  };
 
