@@ -1,5 +1,8 @@
 import  jwt, { JwtPayload } from 'jsonwebtoken';
 import { Role } from '../controllers/models/RegisterRequest';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 function verifyUserToken(req, res, next) {
     
@@ -7,15 +10,18 @@ function verifyUserToken(req, res, next) {
 
     if (!token) return res.status(401).json({ error: 'Access denied' });
     try {
-        const decoded = jwt.verify(token, 'your-secret-key') as CustomJwtPayload;
+
+        const trimmedToken = token.replace("Bearer ", "");
+
+        const decoded = jwt.verify(trimmedToken, process.env.JWT_SECRET) as CustomJwtPayload;
 
         if(decoded.role !== Role.User && decoded.role !== Role.Admin){
-            res.status(401).json({ error: 'Invalid token' });
+            res.status(403).json();
         }
 
         next();
     } catch (error) {
-        res.status(401).json({ error: 'Invalid token' });
+        res.status(401).json();
     }
  };
 
@@ -23,17 +29,20 @@ function verifyUserToken(req, res, next) {
     
     const token = req.header('Authorization');
 
-    if (!token) return res.status(401).json({ error: 'Access denied' });
+    if (!token) return res.status(401).json();
     try {
-        const decoded = await jwt.verify(token, 'your-secret-key') as CustomJwtPayload;
+
+        const trimmedToken = token.replace("Bearer ", "");
+
+        const decoded = await jwt.verify(trimmedToken, process.env.JWT_SECRET) as CustomJwtPayload;
 
         if(decoded.role !== Role.Admin){
-            res.status(401).json({ error: 'Invalid token' });
+            res.status(403).json();
         }
 
         next();
     } catch (error) {
-        res.status(401).json({ error: 'Invalid token' });
+        res.status(401).json();
     }
  };
 
@@ -41,3 +50,5 @@ function verifyUserToken(req, res, next) {
      email: string;
      role: string;
  }
+
+ export { verifyAdminToken, verifyUserToken };

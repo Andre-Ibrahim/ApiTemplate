@@ -14,4 +14,15 @@ async function getUserByEmail(email: string): Promise<IUser | null> {
     return user;
 }
 
-export { insertUser, getUserByEmail };
+async function getAllUsers(): Promise<IUser[]> {
+
+    const users: IUser[] = await User.find();
+
+    if (users.length === 0) {
+        return null;
+    }
+
+    return users;
+}
+
+export { insertUser, getUserByEmail, getAllUsers };

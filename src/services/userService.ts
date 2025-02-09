@@ -4,7 +4,8 @@ import { User, IUser } from '../repositories/Entities/User';
 import bcrypt from 'bcrypt';
 import jwt, { Jwt } from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { insertUser, getUserByEmail } from '../repositories/userRepository'
+import { insertUser, getUserByEmail, getAllUsers } from '../repositories/userRepository';
+import { UserResponse } from "../controllers/models/UserResponse";
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ async function createUser(user: RegisterRequest){
         username: user.username,
         email: user.email,
         password: hashedPassword,
-        role: Role.User
+        role: Role.Admin
     });
 
     await insertUser(newUser);
@@ -29,8 +30,6 @@ async function createUser(user: RegisterRequest){
 async function authUser(user: AuthorizeRequest): Promise<string | null> {
 
     const storedUser = await getUserByEmail(user.email);
-
-    console.log(storedUser);
 
     if(storedUser == null){
         return null;
@@ -43,4 +42,19 @@ async function authUser(user: AuthorizeRequest): Promise<string | null> {
     return null;
 }
 
-export { createUser, authUser };
+async function getUsers(): Promise<UserResponse[]> {
+    const storedUsers: IUser[] = await getAllUsers();
+
+    const users: UserResponse[] = storedUsers.map((u) => {
+        return {
+          id: u.id,
+          username: u.username,
+          email: u.email,
+          role: u.role,
+        };
+      });
+
+    return users;
+}
+
+export { createUser, authUser, getUsers };
