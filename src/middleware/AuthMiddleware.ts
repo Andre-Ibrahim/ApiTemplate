@@ -1,8 +1,5 @@
-import  jwt, { JwtPayload } from 'jsonwebtoken';
+import  jwt from 'jsonwebtoken';
 import { Role } from '../controllers/models/RegisterRequest';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 function verifyUserToken(req, res, next) {
     
